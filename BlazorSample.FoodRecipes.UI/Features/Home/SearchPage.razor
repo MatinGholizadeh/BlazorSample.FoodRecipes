@@ -1,5 +1,54 @@
-﻿<h3>SearchPage</h3>
+﻿@page "/search/{SearchTerm}"
+@inject HttpClient _httpClient;
+
+<h3>SearchPage is in @SearchTerm</h3>
+<hr class="mx-2" />
+@if (_recipes == null)
+{
+    <div>Loading Recipes ...</div>
+}
+else
+{
+    <div class="row">
+        @foreach (var recipe in _recipes)
+        {
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                <RecipeCard recipe="recipe" OnSelectedRecipe="OnSelectedHandler"></RecipeCard>
+            </div>
+        }
+    </div>
+
+    <RecipeDetail recipe="selectedRecipe" OnClose="CloseModal"></RecipeDetail>
+}
 
 @code {
+    [Parameter]
+    public string SearchTerm { get; set; } = string.Empty;
 
+    public IEnumerable<Recipe> _recipes { get; set; }
+
+    public Recipe selectedRecipe { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _recipes = (await _httpClient.GetFromJsonAsync<IEnumerable<Recipe>>("/js/Data.json"))
+                .Where(c => c.Name.Contains(SearchTerm) || c.Description.Contains(SearchTerm));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Baddness -> {ex.Message}");
+        }
+    }
+
+    void OnSelectedHandler(Recipe recipe)
+    {
+        selectedRecipe = recipe;
+    }
+
+    void CloseModal()
+    {
+        selectedRecipe = null;
+    }
 }
