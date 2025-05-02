@@ -14,6 +14,15 @@
     [Parameter,EditorRequired]
     public string SearchTerm { get; set; }
 
+    [Parameter]
+    public int MaxTime { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        _maxTime = MaxTime;
+        base.OnParametersSet();
+    }
+
     private void Filter()
     {
         var myNewAddress = _navigationManager.GetUriWithQueryParameter("MaxTime", _maxTime);
