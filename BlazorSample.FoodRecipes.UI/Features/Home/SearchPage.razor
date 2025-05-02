@@ -1,7 +1,13 @@
 ﻿@page "/search/{SearchTerm}"
+
 @inject HttpClient _httpClient;
 
 <h3>SearchPage is in @SearchTerm</h3>
+<hr class="mx-2" />
+
+<SearchRecipe></SearchRecipe>
+<SearchFilter SearchTerm="@SearchTerm"></SearchFilter>
+
 <hr class="mx-2" />
 @if (_recipes == null)
 {
@@ -25,6 +31,9 @@ else
     [Parameter]
     public string SearchTerm { get; set; } = string.Empty;
 
+    [Parameter, SupplyParameterFromQuery]
+    public int MaxTime { get; set; } = 0;
+
     public IEnumerable<Recipe> _recipes { get; set; }
 
     public Recipe selectedRecipe { get; set; }
@@ -34,7 +43,8 @@ else
         try
         {
             _recipes = (await _httpClient.GetFromJsonAsync<IEnumerable<Recipe>>("/js/Data.json"))
-                .Where(c => c.Name.Contains(SearchTerm) || c.Description.Contains(SearchTerm));
+                .Where(c => c.Name.ToLower().Contains(SearchTerm) || c.Description.ToLower().Contains(SearchTerm))
+                .Where(c => MaxTime == 0 || c.TimeInMinutes <= MaxTime);
         }
         catch (Exception ex)
         {
