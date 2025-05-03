@@ -1,0 +1,26 @@
+﻿@page "/add-recipe"
+
+<PageTitle>Add Recipe</PageTitle>
+
+<h3>Add a recipe</h3>
+
+<EditForm Model="_recipe" OnValidSubmit="SubmitForm">
+    <div class="mt-4 mb-4">
+        <div class="row">
+            <div class="col-8 offset-4">
+                <button class="btn btn-outline-secondary" type="button" @onclick="@(()=> _recipe = new RecipeDto())">
+                    Reset
+                </button>
+                <button class="btn btn-success" type="button">Submit</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public RecipeDto _recipe { get; set; }
+    public async Task SubmitForm()
+    {
+        
+    }
+}

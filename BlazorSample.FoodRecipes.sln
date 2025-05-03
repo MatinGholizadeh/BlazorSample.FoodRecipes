@@ -5,6 +5,12 @@ VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorSample.FoodRecipes.UI", "BlazorSample.FoodRecipes.UI\BlazorSample.FoodRecipes.UI.csproj", "{2B6F61EB-29A7-4454-BBAD-BF128ABA42D6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorSample.FoodRecipes.API", "BlazorSample.FoodRecipes.API\BlazorSample.FoodRecipes.API.csproj", "{FABFC617-F401-441E-AC43-52668EE48ADD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorSample.FoodRecipes.Shared", "BlazorSample.FoodRecipes.Shared\BlazorSample.FoodRecipes.Shared.csproj", "{F38BFBB3-D64F-4B5F-9CC3-93803D4B3E07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorSample.FoodRecipes.DAL", "BlazorSample.FoodRecipes.DAL\BlazorSample.FoodRecipes.DAL.csproj", "{B4F929B2-2842-4A57-83C7-D3A620CDC84E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +21,18 @@ Global
 		{2B6F61EB-29A7-4454-BBAD-BF128ABA42D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B6F61EB-29A7-4454-BBAD-BF128ABA42D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B6F61EB-29A7-4454-BBAD-BF128ABA42D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FABFC617-F401-441E-AC43-52668EE48ADD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FABFC617-F401-441E-AC43-52668EE48ADD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FABFC617-F401-441E-AC43-52668EE48ADD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FABFC617-F401-441E-AC43-52668EE48ADD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F38BFBB3-D64F-4B5F-9CC3-93803D4B3E07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F38BFBB3-D64F-4B5F-9CC3-93803D4B3E07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F38BFBB3-D64F-4B5F-9CC3-93803D4B3E07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F38BFBB3-D64F-4B5F-9CC3-93803D4B3E07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4F929B2-2842-4A57-83C7-D3A620CDC84E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4F929B2-2842-4A57-83C7-D3A620CDC84E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4F929B2-2842-4A57-83C7-D3A620CDC84E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4F929B2-2842-4A57-83C7-D3A620CDC84E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -15,4 +15,8 @@
     <Folder Include="wwwroot\img\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BlazorSample.FoodRecipes.Shared\BlazorSample.FoodRecipes.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
