@@ -1,0 +1,30 @@
+﻿.btn-outline-info {
+    font-family: Roboto;
+    font-weight: 400;
+    font-size: 1rem;
+    cursor: pointer;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 1.5px solid #0d9df0;
+    border-radius: 5px 5px 5px 5px;
+    color: #0d9df0;
+    background-color: white;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+    .btn-outline-info:hover {
+        background-color: #0d9df0;
+        color: white;
+        transition: background-color 0.15s, border 0.15s;
+    }
+
+    .btn-outline-info:active {
+        border: 1.5px solid #007ec7; /* Inner border */
+        background-color: #007ec7;
+        box-shadow: 0 0 0 2px white, /* Inner white spacer (optional) */
+        0 0 0 4px rgb(10, 104, 160, 0.86); /* Outer border with spacing */
+        transform: scale(0.98); /* Subtle press effect (optional) */
+        color: white;
+    }

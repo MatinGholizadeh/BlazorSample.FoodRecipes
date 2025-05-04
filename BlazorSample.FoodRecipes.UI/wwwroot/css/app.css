@@ -385,3 +385,23 @@ code {
 /* ======================
     Button More Info - End
 ====================== */
+
+/* ============================================
+    Remove Arrows in indexNumber - Start
+============================================ */
+
+/* Hide arrows for all InputNumber components */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* ============================================
+    Remove Arrows in indexNumber - End
+============================================ */
