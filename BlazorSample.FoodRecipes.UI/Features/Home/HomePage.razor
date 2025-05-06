@@ -35,7 +35,7 @@ else
     {
         try
         {
-            _recipes = await _httpClient.GetFromJsonAsync<IEnumerable<Recipe>>("/js/Data.json");
+            _recipes = await _httpClient.GetFromJsonAsync<IEnumerable<Recipe>>("api/Recipe");
         }
         catch (Exception ex)
         {

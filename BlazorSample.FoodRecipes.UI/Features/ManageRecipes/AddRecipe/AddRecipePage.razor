@@ -1,0 +1,236 @@
+﻿@page "/add-recipe"
+@inject HttpClient _httpClient;
+@inject IJSRuntime JSRuntime;
+@inject NavigationManager NavigationManager
+<PageTitle>Add Recipe</PageTitle>
+
+<h3>Add a recipe</h3>
+
+@if (_success)
+{
+    <div class="alert alert-success">
+        Recipe saved with id: @_id
+    </div>
+}
+else if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <div class="alert alert-danger">
+        @_errorMessage
+    </div>
+}
+
+<EditForm EditContext="_editContext" OnValidSubmit="SubmitForm">
+    <FluentValidationValidator></FluentValidationValidator>
+    @* ==================================================
+                Basic data part - Start
+    =====================================================*@
+    <FormSection Title="Basic Data" Description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Egestas purus viverra accumsan in nisl nisi. Arcu cursus vitae congue mauris rhoncus aenean vel elit scelerisque. In egestas erat imperdiet sed euismod nisi porta lorem mollis. Morbi tristique senectus et netus.">
+        <div class="row ">
+            <FormFieldSet>
+                <label for="Name" class="text-secondary fw-bold">
+                    Name
+                </label>
+                <InputText @bind-Value="_recipe.Name" class="form-control mt-1" id="recipeName"></InputText>
+            </FormFieldSet>
+        </div>
+        <div class="validation-margin">
+            <ValidationMessage For="@(() => _recipe.Name)" />
+        </div>
+        @* ********************************************************************************************************** *@
+        <div class="row mt-3">
+            <FormFieldSet>
+                <label for="Description" class="text-secondary fw-bold">
+                    Description
+                </label>
+                <InputTextArea rows="6" @bind-Value="_recipe.Description" class="form-control mt-1" id="recipeDescription"></InputTextArea>
+            </FormFieldSet>
+        </div>
+        <div class="validation-margin">
+            <ValidationMessage For="@(() => _recipe.Description)" />
+        </div>
+        @* ********************************************************************************************************** *@
+        <div class="row mt-3">
+            <FormFieldSet>
+                <label for="Originality" class="text-secondary fw-bold">
+                    Originality
+                </label>
+                <InputText @bind-Value="_recipe.Originality" class="form-control mt-1" id="recipeOriginality"></InputText>
+            </FormFieldSet>
+        </div>
+        <div class="validation-margin">
+            <ValidationMessage For="@(() => _recipe.Originality)" />
+        </div>
+        @* ********************************************************************************************************** *@
+        <div class="row mt-3">
+            <FormFieldSet Width="col-md-6">
+                <label for="Price" class="text-secondary fw-bold">
+                    Price
+                </label>
+                <InputNumber @bind-Value="_recipe.Price" class="form-control mt-1" id="recipePrice"></InputNumber>
+            </FormFieldSet>
+            <FormFieldSet Width="col-md-6">
+                <label for="TimeInMinutes" class="text-secondary fw-bold">
+                    Cooking Time
+                </label>
+                <InputTime @bind-Value="_recipe.TimeInMinutes" id="recipeTimeInMinutes"></InputTime>
+            </FormFieldSet>
+        </div>
+        @*Validation Part*@
+        <div class="row">
+            <div class="col-md-6 validation-margin">
+                <ValidationMessage For="@(() => _recipe.Price)" />
+            </div>
+            <div class="col-md-6 validation-margin">
+                <ValidationMessage For="@(() => _recipe.TimeInMinutes)" />
+            </div>
+        </div>
+        @* ********************************************************************************************************** *@
+
+        <div class="row mt-3">
+            <FormFieldSet>
+                <label for="RecipeImage" class="text-secondary fw-bold">
+                    Recipe Image
+                </label>
+                <InputFile OnChange="LoadRecipeFile" accept=".jpg,.jpeg,.png,image/jpeg,image/png" class="form-control mt-1" id="RecipeImage"></InputFile>
+            </FormFieldSet>
+        </div>
+        @*         <div class="validation-margin">
+            <ValidationMessage For="@(() => _recipe.Originality)" />
+        </div> *@
+
+        @* ********************************************************************************************************** *@
+    </FormSection>
+    @* ==================================================
+                Basic data part - The End
+    =====================================================*@
+    @* ==================================================
+                Ingridient data part - Start
+    =====================================================*@
+    <FormSection Title="Ingridient Data" Description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Egestas purus viverra accumsan in nisl nisi. Arcu cursus vitae congue mauris rhoncus aenean vel elit scelerisque. In egestas erat imperdiet sed euismod nisi porta lorem mollis. Morbi tristique senectus et netus.">
+        @foreach (var (ingridient, index) in _recipe.Ingridients.Select((x, i) => (x, i + 1)))
+        {
+            <div class="row mb-3">
+                <FormFieldSet>
+                    <label for="IngridientName" class="text-secondary fw-bold">
+                        Ingredient @index <!-- Shows "Ingredient 1", "Ingredient 2", etc. -->
+                    </label>
+                    <div class="input-group mt-1">
+                        <InputText @bind-Value="ingridient.Name" class="form-control me-1 flex-grow-1" id="ingridientName"></InputText>
+                        <button type="button" class="btn btn-outline-danger" @onclick="@(() => _recipe.Ingridients.Remove(ingridient))">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                            </svg>
+                            Remove
+                        </button>
+                    </div>
+                    <div class="validation-margin">
+                        <ValidationMessage For="@(() => ingridient.Name)" />
+                    </div>
+                </FormFieldSet>
+
+            </div>
+        }
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-outline-info" @onclick="@(() => _recipe.Ingridients.Add(new IngridientDto()))">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                    </svg>
+                    Add Ingridient
+                </button>
+                <div class="validation-margin">
+                    <ValidationMessage For="@(() => _recipe.Ingridients)" />
+                </div>
+            </div>
+        </div>
+    </FormSection>
+    @* ==================================================
+                Ingridient data part - The End
+    =====================================================*@
+    <div class="mt-4 mb-4">
+        <div class="row">
+            <div class="align-self-start">
+                <button class="btn btn-outline-secondary" type="button"
+                @onclick="@(()=> { ResetForm(); StateHasChanged(); })">
+                    Reset
+                </button>
+                <button class="btn btn-success" type="submit">Submit</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private int _id;
+    private bool _success;
+    private string _errorMessage;
+    private EditContext _editContext;
+    private IBrowserFile _recipeFile;
+    protected override void OnInitialized()
+    {
+        _editContext = new EditContext(_recipe);
+        _editContext.SetFieldCssClassProvider(new BootstrapCssClassProvider());
+    }
+    private RecipeDto _recipe = new RecipeDto();
+
+    public void LoadRecipeFile(InputFileChangeEventArgs args)
+    {
+        _recipeFile = args.File;
+    }
+
+    private void ResetForm()
+    {
+        _recipe = new RecipeDto();
+        _recipeFile = null;
+        _editContext = new EditContext(_recipe);// <- important!
+        _editContext.SetFieldCssClassProvider(new BootstrapCssClassProvider());
+    }
+
+    public async Task SubmitForm()
+    {
+        // Alert!!! - Because I didn't have "await" in the line below, I couldn't use "IsSuccessStatusCode"!!
+        var response = await _httpClient.PostAsJsonAsync("/api/Recipe", _recipe);
+        if (response.IsSuccessStatusCode)
+        {
+            _id = int.Parse(await response.Content.ReadAsStringAsync());
+
+            if (_recipeFile != null)
+            {
+                var fileContent = _recipeFile.OpenReadStream(_recipeFile.Size);
+
+                using var content = new MultipartFormDataContent();
+
+                content.Add(new StreamContent(fileContent), "image", _recipeFile.Name);
+
+                var imageResponse = await _httpClient.PostAsync($"/api/Recipe/{_id}", content);
+                if (imageResponse.IsSuccessStatusCode)
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+
+            _success = true;
+            _errorMessage = string.Empty;
+
+            ResetForm();
+
+            // Scroll to top after submission
+            await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
+            await JSRuntime.InvokeVoidAsync("alert", "Action is done successfully!");
+            StateHasChanged();
+        }
+        else
+        {
+            _errorMessage = "There was a problem for saving recipe.";
+            _success = false;
+            _id = -1;
+
+        }
+    }
+}

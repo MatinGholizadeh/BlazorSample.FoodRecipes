@@ -1,0 +1,52 @@
+﻿@inherits InputBase<int>
+
+<div class="input-group">
+    <input type="number" class="form-control @CssClass" min="0" max="10" @onchange="SetHours" value="@_hours" /> @*Max hours cooking is 10!*@
+    <span class="input-group-text">Hours</span>
+    <input type="number" class="form-control @CssClass" min="0" max="59" @onchange="SetMinutes" value="@_minutes" /> @*Max minute is 59!*@
+    <span class="input-group-text">Minutes</span>
+</div>
+
+@code {
+    private int _hours;
+    private int _minutes;
+    private string CssClass => EditContext?.FieldCssClass(FieldIdentifier) ?? "";
+
+    private void SetHours(ChangeEventArgs args)
+    {
+        int.TryParse(args.Value?.ToString(), out _hours);
+        SetCurrentValue();
+    }
+
+    private void SetMinutes(ChangeEventArgs args)
+    {
+        int.TryParse(args.Value?.ToString(), out _minutes);
+        SetCurrentValue();
+    }
+
+    private void SetCurrentValue()
+    {
+        CurrentValue = (_hours * 60) + _minutes;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (CurrentValue > 0)
+        {
+            _hours = CurrentValue / 60;
+            _minutes = CurrentValue % 60;
+        }
+        else
+        {
+            _hours = 0;
+            _minutes = 0;
+        }
+    }
+
+    protected override bool TryParseValueFromString(string value, out int result, out string validationErrorMessage)
+    {
+        validationErrorMessage = string.Empty;
+
+        return int.TryParse(value, out result);
+    }
+}

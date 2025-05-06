@@ -1,0 +1,15 @@
+﻿.card-img-container {
+    width: 100%;
+    aspect-ratio: 4 / 3; /* Or auto; adjust to taste */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f8f8;
+}
+
+.card-img-top {
+    width: 100%;
+    height: auto;
+    object-fit: cover; /* OR 'contain' if you prefer full view inside */
+}

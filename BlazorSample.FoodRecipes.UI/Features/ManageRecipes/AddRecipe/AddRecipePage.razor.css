@@ -28,3 +28,12 @@
         transform: scale(0.98); /* Subtle press effect (optional) */
         color: white;
     }
+/*.addmore-border {
+    
+    border: 1px solid #dc3545;
+    border: 0px;
+}*/
+
+.validation-margin {
+    margin-top: 8px;
+}
