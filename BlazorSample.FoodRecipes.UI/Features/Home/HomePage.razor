@@ -4,7 +4,9 @@
 
 <SearchRecipe></SearchRecipe>
 
-<hr class="mt-2 mb-4" />
+<br />
+<br />
+<br />
 
 @if (_recipes == null)
 {
@@ -40,50 +42,26 @@ else
                 @foreach (var recipe in _recipes)
                 {
                     <tbody>
-                        <tr>
-                            <td>
-                                @recipe.Name
-                            </td>
-                            <td class="description-width">
-                                <div class="@(_expandedDescriptions[recipe.Id] ? "" : "description-truncate")">
-                                    @recipe.Description
-                                </div>
-                                @if (recipe.Description.Length > 30) @* Show "More/Less" only if needed *@
-                                {
-                                    <a class="show-more-link" @onclick="() => ToggleDescription(recipe.Id)">
-                                        @(_expandedDescriptions[recipe.Id] ? "Less" : "More")
-                                    </a>
-                                }
-                            </td>
-                            <td class="align-partTwo">
-                                @recipe.Originality
-                            </td>
-                            <td class="align-partTwo">
-                                @recipe.TimeInString
-                            </td>
-                            <td class="align-partTwo">
-                                @recipe.Price
-                            </td>
-                            <td class="align-partTwo">
-                                <button class="btn btn-outline-info" @onclick="@(() => OnSelectedHandler(recipe))">More</button>
-                            </td>
-                        </tr>
+                        <RecipeTableRow Recipe="recipe" OnSelected="OnSelectedHandler" />
                     </tbody>
                 }
             </table>
+            <RecipeDetail recipe="selectedRecipe" OnClose="CloseModal"></RecipeDetail>
         </TableTemplate>
     </ViewSwitcher>
 
-
+    <br />
+    <br />
+    <br />
 }
 
 
 @code {
 
-    public IEnumerable<Recipe> _recipes { get; set; }
-
     public Recipe selectedRecipe { get; set; }
-
+    public IEnumerable<Recipe> _recipes { get; set; }
+    private Dictionary<int, bool> _showMoreLinks = new();
+    private Dictionary<int, ElementReference> _descriptionRefs = new();
     private Dictionary<int, bool> _expandedDescriptions = new Dictionary<int, bool>();
 
     protected override async Task OnInitializedAsync()
@@ -106,6 +84,24 @@ else
             Console.WriteLine($"Error loading recipes: {ex.Message}");
         }
     }
+
+    [Inject] IJSRuntime JS { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && _recipes != null)
+        {
+            foreach (var recipe in _recipes)
+            {
+                var elementRef = _descriptionRefs[recipe.Id];
+                var showLink = await JS.InvokeAsync<bool>("checkOverflow", elementRef);
+                _showMoreLinks[recipe.Id] = showLink;
+            }
+
+            StateHasChanged(); // Rerender with updated "More" visibility
+        }
+    }
+
 
     void ToggleDescription(int recipeId)
     {
