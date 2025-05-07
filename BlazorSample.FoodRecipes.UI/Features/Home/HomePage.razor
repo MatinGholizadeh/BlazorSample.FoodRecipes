@@ -1,5 +1,7 @@
 ﻿@page "/"
 @inject HttpClient _httpClient;
+@inject NavigationManager _navigationManager
+
 <PageTitle>Recipes Home Page</PageTitle>
 
 <SearchRecipe></SearchRecipe>
@@ -17,7 +19,7 @@ else
     <ViewSwitcher>
         <CardTemplate>
             <div class="row">
-                @foreach (var recipe in _recipes)
+                @foreach (var recipe in FilteredRecipes)
                 {
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
                         <RecipeCard recipe="recipe" OnSelectedRecipe="OnSelectedHandler"></RecipeCard>
@@ -39,7 +41,7 @@ else
                         <th scope="col" class="align-partTwo">View</th>
                     </tr>
                 </thead>
-                @foreach (var recipe in _recipes)
+                @foreach (var recipe in FilteredRecipes)
                 {
                     <tbody>
                         <RecipeTableRow Recipe="recipe" OnSelected="OnSelectedHandler" />
@@ -55,14 +57,20 @@ else
     <br />
 }
 
-
 @code {
-
     public Recipe selectedRecipe { get; set; }
     public IEnumerable<Recipe> _recipes { get; set; }
+    public IEnumerable<Recipe> FilteredRecipes => _recipes?
+        .Where(r => string.IsNullOrEmpty(_searchTerm) ||
+                   r.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                   r.Description.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase))
+        .Where(r => _maxTime == 0 || r.TimeInMinutes <= _maxTime);
+
+    private string _searchTerm = "";
+    private int _maxTime = 0;
     private Dictionary<int, bool> _showMoreLinks = new();
     private Dictionary<int, ElementReference> _descriptionRefs = new();
-    private Dictionary<int, bool> _expandedDescriptions = new Dictionary<int, bool>();
+    private Dictionary<int, bool> _expandedDescriptions = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -70,7 +78,6 @@ else
         {
             _recipes = await _httpClient.GetFromJsonAsync<IEnumerable<Recipe>>("api/Recipe");
 
-            // Initialize all descriptions as collapsed
             if (_recipes != null)
             {
                 foreach (var recipe in _recipes)
@@ -97,11 +104,9 @@ else
                 var showLink = await JS.InvokeAsync<bool>("checkOverflow", elementRef);
                 _showMoreLinks[recipe.Id] = showLink;
             }
-
-            StateHasChanged(); // Rerender with updated "More" visibility
+            StateHasChanged();
         }
     }
-
 
     void ToggleDescription(int recipeId)
     {

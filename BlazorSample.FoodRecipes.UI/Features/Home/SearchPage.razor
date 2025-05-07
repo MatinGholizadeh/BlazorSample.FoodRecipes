@@ -1,30 +1,56 @@
 ﻿@page "/search/{SearchTerm}"
-
 @inject HttpClient _httpClient;
+@inject NavigationManager _navigationManager
 
-<h3>SearchPage is in @SearchTerm</h3>
+<h3>Search Results for "@SearchTerm"</h3>
 <hr class="mx-2" />
 
 <SearchRecipe></SearchRecipe>
 <SearchFilter SearchTerm="@SearchTerm" MaxTime="@MaxTime"></SearchFilter>
 
 <hr class="mx-2" />
+
 @if (_recipes == null)
 {
     <div>Loading Recipes ...</div>
 }
 else
 {
-    <div class="row">
-        @foreach (var recipe in _recipes)
-        {
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                <RecipeCard recipe="recipe" OnSelectedRecipe="OnSelectedHandler"></RecipeCard>
+    <ViewSwitcher>
+        <CardTemplate>
+            <div class="row">
+                @foreach (var recipe in FilteredRecipes)
+                {
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <RecipeCard recipe="recipe" OnSelectedRecipe="OnSelectedHandler"></RecipeCard>
+                    </div>
+                }
             </div>
-        }
-    </div>
 
-    <RecipeDetail recipe="selectedRecipe" OnClose="CloseModal"></RecipeDetail>
+            <RecipeDetail recipe="selectedRecipe" OnClose="CloseModal"></RecipeDetail>
+        </CardTemplate>
+        <TableTemplate>
+            <table class="table table-hover table-sm align-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col" class="align-partTwo">Originality</th>
+                        <th scope="col" class="align-partTwo">Cooking Time</th>
+                        <th scope="col" class="align-partTwo">Price</th>
+                        <th scope="col" class="align-partTwo">View</th>
+                    </tr>
+                </thead>
+                @foreach (var recipe in FilteredRecipes)
+                {
+                    <tbody>
+                        <RecipeTableRow Recipe="recipe" OnSelected="OnSelectedHandler" />
+                    </tbody>
+                }
+            </table>
+            <RecipeDetail recipe="selectedRecipe" OnClose="CloseModal"></RecipeDetail>
+        </TableTemplate>
+    </ViewSwitcher>
 }
 
 @code {
@@ -35,6 +61,10 @@ else
     public int MaxTime { get; set; } = 0;
 
     public IEnumerable<Recipe> _recipes { get; set; }
+    public IEnumerable<Recipe> FilteredRecipes => _recipes?
+        .Where(r => r.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
+                   r.Description.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase))
+        .Where(r => MaxTime == 0 || r.TimeInMinutes <= MaxTime);
 
     public Recipe selectedRecipe { get; set; }
 
@@ -42,13 +72,11 @@ else
     {
         try
         {
-            _recipes = (await _httpClient.GetFromJsonAsync<IEnumerable<Recipe>>("/js/Data.json"))
-                .Where(c => c.Name.ToLower().Contains(SearchTerm) || c.Description.ToLower().Contains(SearchTerm))
-                .Where(c => MaxTime == 0 || c.TimeInMinutes <= MaxTime);
+            _recipes = await _httpClient.GetFromJsonAsync<IEnumerable<Recipe>>("api/Recipe");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Baddness -> {ex.Message}");
+            Console.WriteLine($"Error loading recipes: {ex.Message}");
         }
     }
 
