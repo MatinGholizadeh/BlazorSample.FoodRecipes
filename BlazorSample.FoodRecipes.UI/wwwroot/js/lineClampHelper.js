@@ -1,21 +1,12 @@
-﻿export function isTextClamped(elementId) {
-    const element = document.getElementById(elementId);
-    if (!element) return false;
-
-    return element.scrollHeight > element.clientHeight;
-}
-
-export function observeTextClamping(elementId, dotnetHelper) {
-    const element = document.getElementById(elementId);
-    if (!element) return;
-
-    const observer = new ResizeObserver(() => {
-        const isClamped = element.scrollHeight > element.clientHeight;
-        dotnetHelper.invokeMethodAsync('UpdateClampedState', elementId, isClamped);
-    });
-
-    observer.observe(element);
-    return {
-        dispose: () => observer.disconnect()
-    };
-}
+﻿window.checkSingleDescription = (dotNetRef, id) => {
+    setTimeout(() => {
+        const el = document.getElementById(`desc-${id}`);
+        if (el) {
+            const lineHeight = parseFloat(getComputedStyle(el).lineHeight);
+            const maxLines = 2;
+            const maxHeight = lineHeight * maxLines;
+            const isOverflow = el.scrollHeight > maxHeight;
+            dotNetRef.invokeMethodAsync("SetShowMore", isOverflow);
+        }
+    }, 50);
+};

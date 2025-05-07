@@ -1,0 +1,19 @@
+﻿.primary {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+    .primary:active {
+        background-color: #0a58ca;
+        color: #fff;
+    }
+
+.secondary {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+    .secondary:active {
+        background-color: #4b5156;
+        color: #fff;
+    }

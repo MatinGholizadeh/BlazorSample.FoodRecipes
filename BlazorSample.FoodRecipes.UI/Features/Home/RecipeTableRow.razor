@@ -1,0 +1,50 @@
+﻿@using BlazorSample.FoodRecipes.UI.Features.Home
+@inject IJSRuntime JS
+
+<tr>
+    <td class="row-name">@Recipe.Name</td>
+    <td class="row-description">
+        <div @ref="descriptionRef"
+             class="@(_expanded ? "" : "description-truncate")">
+            @Recipe.Description
+        </div>
+
+        @if (_showMore)
+        {
+            <a class="show-more-link" @onclick="Toggle">
+                @(_expanded ? "Less" : "More")
+            </a>
+        }
+    </td>
+    <td class="row-originality">@Recipe.Originality</td>
+    <td class="row-cookingTime">@Recipe.TimeInString</td>
+    <td class="row-price">@Recipe.Price</td>
+    <td class="row-view">
+        <button class="btn btn-outline-info" @onclick="@(() => OnSelected.InvokeAsync(Recipe))">More</button>
+    </td>
+</tr>
+
+
+
+@code {
+    [Parameter] public Recipe Recipe { get; set; }
+    [Parameter] public EventCallback<Recipe> OnSelected { get; set; }
+
+    private ElementReference descriptionRef;
+    private bool _showMore;
+    private bool _expanded;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _showMore = await JS.InvokeAsync<bool>("checkOverflow", descriptionRef);
+            StateHasChanged();
+        }
+    }
+
+    private void Toggle()
+    {
+        _expanded = !_expanded;
+    }
+}
