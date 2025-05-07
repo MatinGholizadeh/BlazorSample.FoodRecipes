@@ -12,16 +12,69 @@
 }
 else
 {
-    <div class="row">
-        @foreach (var recipe in _recipes)
-        {
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                <RecipeCard recipe="recipe" OnSelectedRecipe="OnSelectedHandler"></RecipeCard>
+    <ViewSwitcher>
+        <CardTemplate>
+            <div class="row">
+                @foreach (var recipe in _recipes)
+                {
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <RecipeCard recipe="recipe" OnSelectedRecipe="OnSelectedHandler"></RecipeCard>
+                    </div>
+                }
             </div>
-        }
-    </div>
 
-    <RecipeDetail recipe="selectedRecipe" OnClose="CloseModal"></RecipeDetail>
+            <RecipeDetail recipe="selectedRecipe" OnClose="CloseModal"></RecipeDetail>
+        </CardTemplate>
+        <TableTemplate>
+            <table class="table table-hover table-sm align-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col" class="align-partTwo">Originality</th>
+                        <th scope="col" class="align-partTwo">Cooking Time</th>
+                        <th scope="col" class="align-partTwo">Price</th>
+                        <th scope="col" class="align-partTwo">View</th>
+                    </tr>
+                </thead>
+                @foreach (var recipe in _recipes)
+                {
+                    <tbody>
+                        <tr>
+                            <td>
+                                @recipe.Name
+                            </td>
+                            <td class="description-width">
+                                <div class="@(_expandedDescriptions[recipe.Id] ? "" : "description-truncate")">
+                                    @recipe.Description
+                                </div>
+                                @if (recipe.Description.Length > 30) @* Show "More/Less" only if needed *@
+                                {
+                                    <a class="show-more-link" @onclick="() => ToggleDescription(recipe.Id)">
+                                        @(_expandedDescriptions[recipe.Id] ? "Less" : "More")
+                                    </a>
+                                }
+                            </td>
+                            <td class="align-partTwo">
+                                @recipe.Originality
+                            </td>
+                            <td class="align-partTwo">
+                                @recipe.TimeInString
+                            </td>
+                            <td class="align-partTwo">
+                                @recipe.Price
+                            </td>
+                            <td class="align-partTwo">
+                                <button class="btn btn-outline-info" @onclick="@(() => OnSelectedHandler(recipe))">More</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                }
+            </table>
+        </TableTemplate>
+    </ViewSwitcher>
+
+
 }
 
 
@@ -31,15 +84,34 @@ else
 
     public Recipe selectedRecipe { get; set; }
 
+    private Dictionary<int, bool> _expandedDescriptions = new Dictionary<int, bool>();
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
             _recipes = await _httpClient.GetFromJsonAsync<IEnumerable<Recipe>>("api/Recipe");
+
+            // Initialize all descriptions as collapsed
+            if (_recipes != null)
+            {
+                foreach (var recipe in _recipes)
+                {
+                    _expandedDescriptions[recipe.Id] = false;
+                }
+            }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Baddness -> {ex.Message}");
+            Console.WriteLine($"Error loading recipes: {ex.Message}");
+        }
+    }
+
+    void ToggleDescription(int recipeId)
+    {
+        if (_expandedDescriptions.ContainsKey(recipeId))
+        {
+            _expandedDescriptions[recipeId] = !_expandedDescriptions[recipeId];
         }
     }
 

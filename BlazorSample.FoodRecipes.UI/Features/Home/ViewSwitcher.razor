@@ -1,0 +1,37 @@
+﻿<div>
+    <div>
+        <div class="btn-group mb-2">
+            <button @onclick="@(()=> _model = ViewModel.Card)" class=" btn @(_model == ViewModel.Card? "btn-primary" : "btn-secondary")">
+                Card
+            </button>
+            <button @onclick="@(()=> _model = ViewModel.Table)" class=" btn @(_model == ViewModel.Table? "btn-primary" : "btn-secondary")">
+                Table
+            </button>
+        </div>
+        @if (_model == ViewModel.Card)
+        {
+            @CardTemplate
+        }
+        else if (_model == ViewModel.Table)
+        {
+            @TableTemplate
+        }
+    </div>
+</div>
+
+@code {
+
+    private enum ViewModel
+    {
+        Card,
+        Table
+    }
+
+    private ViewModel _model = ViewModel.Card;
+
+    [Parameter, EditorRequired]
+    public RenderFragment CardTemplate { get; set; }
+
+    [Parameter, EditorRequired]
+    public RenderFragment TableTemplate { get; set; }
+}

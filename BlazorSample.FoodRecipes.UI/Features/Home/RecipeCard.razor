@@ -42,7 +42,6 @@
         <p class="description-text">@recipe.Description</p>
     </div>
     <div class="align-self-end btnInfo">
-        @*me-3 mb-2 mt-1*@
         <button class="btn-outline-info" @onclick="@(async ()=> await OnSelectedRecipe.InvokeAsync(recipe))">More</button>
     </div>
 </div>
